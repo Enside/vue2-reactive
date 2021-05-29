@@ -12,7 +12,6 @@ class Watcher {
 		expOrFn: string | Function,
 		cb: (oldVal?: any, newVal?: any) => void
 	) {
-		Dep.target = this
 		this.data = data
 		if (typeof expOrFn === 'string') {
 			this.expOrFn = expOrFn.split('.')
@@ -20,6 +19,7 @@ class Watcher {
 			this.expOrFn = expOrFn.bind(data)
 		}
 		this.cb = cb
+		Dep.target = this
 		this.update()
 		Dep.target = null
 	}
@@ -29,6 +29,8 @@ class Watcher {
 		const newVal = this.getValue()
 		if (oldVal !== newVal) {
 			this.cache = newVal
+			this.cb(oldVal, newVal)
+		} else if (typeof oldVal === 'object') {
 			this.cb(oldVal, newVal)
 		}
 	}
