@@ -1,7 +1,7 @@
 import Observer from './observer'
 import Watcher from './watcher'
 
-const data: any = { a: 1, b: 2, deep: { a: 1, b: 2 }, array: [1, 2, 3, [4, 5]] }
+const data: any = { a: 1, b: 2, deep: { a: {}, b: 2 }, array: [1, 2, 3, [4, 5]] }
 
 new Observer(data)
 
@@ -56,7 +56,7 @@ const deepa = new Watcher(data, 'deep.a', (oldVal, newVal) => {
 // data.b = 0
 
 console.log('================== test deep ==================')
-data.deep.a = 0
+data.deep.a = {}
 // data.deep = 0
 
 // console.log('================== test array ==================')

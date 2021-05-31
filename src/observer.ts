@@ -3,10 +3,10 @@ import Dep from './dep'
 class Observer {
 	private data: object = Object.create(null)
 
-	constructor(data: object, parentDep?: Dep) {
+	constructor(data: object) {
 		for (const key in data) {
 			if (Object.prototype.hasOwnProperty.call(data, key)) {
-				const dep = new Dep(parentDep)
+				const dep = new Dep()
 				this.process(data[key], dep)
 				this.hijack(data, key, dep)
 			}
@@ -17,7 +17,7 @@ class Observer {
 		if (value instanceof Array) {
 			this.rewriteArrayFn(value, dep)
 		} else if (typeof value === 'object') {
-			new Observer(value, dep)
+			new Observer(value)
 		}
 	}
 
@@ -29,13 +29,13 @@ class Observer {
 			writable: true,
 		})
 		Object.defineProperty(data, key, {
-			get() {
+			get: function reactiveGetter() {
 				if (Dep.target) {
 					dep.addSub()
 				}
 				return self.data[key]
 			},
-			set(value) {
+			set: function reactiveSetter(value) {
 				if (value !== self.data[key]) {
 					self.process(value, dep)
 					self.data[key] = value

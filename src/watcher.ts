@@ -48,7 +48,9 @@ class Watcher {
 			let levelData = this.data
 			for (let index = 0; index < levelNumber; index++) {
 				if (index + 1 === levelNumber) {
-					return levelData[path[index]]
+					const value = levelData[path[index]]
+					this.walkChildren(value)
+					return value
 				}
 				levelData = levelData[path[index]]
 				if (!levelData) {
@@ -57,6 +59,16 @@ class Watcher {
 			}
 		} else {
 			return this.expOrFn()
+		}
+	}
+
+	private walkChildren(data: any) {
+		if (typeof data === 'object' && !(data instanceof Array)) {
+			for (const key in data) {
+				if (Object.prototype.hasOwnProperty.call(data, key)) {
+					this.walkChildren(data[key])
+				}
+			}
 		}
 	}
 }
